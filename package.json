@@ -1,0 +1,31 @@
+{
+  "name": "rxjs-ds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "clear": "rm -rf ./dist",
+    "build": "npm run clear && tsc",
+    "bundle": "rollup -c",
+    "build_bundle": "npm run build && npm run bundle",
+    "clear_test": "rm -rf ./test-js",
+    "build_cjs": "npm run clear && tsc -p tsconfig-cjs.json",
+    "build_test": "npm run clear_test && tsc -p test/tsconfig.json",
+    "test": "mocha ./test-js",
+    "test_build_run": "npm run build_test && npm run test"
+  },
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "rxjs": "^5.4.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/mocha": "^2.2.43",
+    "chai": "^4.1.2",
+    "mocha": "^4.0.1",
+    "rollup": "^0.50.0",
+    "rxjs": "^5.4.0",
+    "typescript": "^2.5.3"
+  }
+}
