@@ -11,7 +11,7 @@
     "clear_test": "rm -rf ./test-js",
     "build_cjs": "npm run clear && tsc -p tsconfig-cjs.json",
     "build_test": "npm run clear_test && tsc -p test/tsconfig.json",
-    "test": "mocha ./test-js",
+    "test": "mocha ./test-js --reporter list",
     "test_build_run": "npm run build_test && npm run test"
   },
   "author": "",
