@@ -22,4 +22,36 @@ describe('ObservableObject', () => {
       const triggerGetter = o['b'];
     });
   });
+
+  describe('onSet', () => {
+    it('should emit when setting an object property', done => {
+      const o = ObservableObject.create();
+
+      assert.exists(o.onSet);
+
+      o.onSet.take(1).subscribe(e => {
+        assert.equal('b', e.property);
+        assert.isUndefined(e.oldValue);
+        assert.equal(2, e.newValue);
+        done();
+      });
+
+      o['b'] = 2; // trigger setter
+    });
+
+    it('should emit when overriding an object property', done => {
+      const o = ObservableObject.create();
+
+      o['b'] = 2;
+
+      o.onSet.take(1).subscribe(e => {
+        assert.equal('b', e.property);
+        assert.equal(2, e.oldValue);
+        assert.equal(3, e.newValue);
+        done();
+      });
+
+      o['b'] = 3; // trigger setter
+    });
+  });
 });
