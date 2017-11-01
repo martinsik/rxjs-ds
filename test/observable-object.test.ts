@@ -54,4 +54,22 @@ describe('ObservableObject', () => {
       o['b'] = 3; // trigger setter
     });
   });
+
+  describe('onDelete', () => {
+    it('should emit when an object property is deleted', done => {
+      const o = ObservableObject.create();
+
+      o['a'] = 1;
+      o['b'] = 2;
+      o['c'] = 3;
+
+      o.onDelete.take(1).subscribe(e => {
+        assert.equal('b', e.property);
+        assert.equal(2, e.value);
+        done();
+      });
+
+      delete o['b'];
+    });
+  });
 });
