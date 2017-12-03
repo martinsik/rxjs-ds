@@ -30,12 +30,12 @@ export class ObservableObject {
   onKeysChanged: Observable<GetEvent>;
   onDelete: Observable<DeleteEvent>;
 
-  static create(): ObservableObject {
+  static create(obj: any = {}): ObservableObject {
     const onGet = new Subject<GetEvent>();
     const onSet = new Subject<SetEvent>();
     const onDelete = new Subject<DeleteEvent>();
 
-    const proxy = new Proxy({}, {
+    const proxy = new Proxy(obj, {
       get: (target: any, property: PropertyKey, receiver?: any) => {
         const value = target[property];
 
@@ -53,16 +53,22 @@ export class ObservableObject {
 
       deleteProperty: (target: any, property: PropertyKey): boolean => {
         const value = target[property];
-        delete target[property];
+        const ret = delete target[property];
 
         onDelete.next({property, value});
-        return true;
+        return ret;
       },
+
+      // apply: (target: any, thisArg: any, argumentsList: any[]): void => {
+      //   console.log('apply');
+      //   onApply.next({ thisArg, argumentsList });
+      // }
     });
 
     proxy.onGet = onGet;
     proxy.onSet = onSet;
     proxy.onDelete = onDelete;
+    // proxy.onApply = onApply;
 
     return proxy;
   }

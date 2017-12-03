@@ -7,11 +7,9 @@ describe('ObservableObject', () => {
     it('should emit when accessing an object property', done => {
       const o = ObservableObject.create();
 
-      assert.exists(o.onGet);
-
       o.onGet.take(1).subscribe(e => {
-        assert.equal('b', e.property);
-        assert.equal(2, e.value);
+        assert.strictEqual('b', e.property);
+        assert.strictEqual(2, e.value);
         done();
       });
 
@@ -27,12 +25,10 @@ describe('ObservableObject', () => {
     it('should emit when setting an object property', done => {
       const o = ObservableObject.create();
 
-      assert.exists(o.onSet);
-
       o.onSet.take(1).subscribe(e => {
-        assert.equal('b', e.property);
+        assert.strictEqual('b', e.property);
         assert.isUndefined(e.oldValue);
-        assert.equal(2, e.newValue);
+        assert.strictEqual(2, e.newValue);
         done();
       });
 
@@ -45,9 +41,9 @@ describe('ObservableObject', () => {
       o['b'] = 2;
 
       o.onSet.take(1).subscribe(e => {
-        assert.equal('b', e.property);
-        assert.equal(2, e.oldValue);
-        assert.equal(3, e.newValue);
+        assert.strictEqual('b', e.property);
+        assert.strictEqual(2, e.oldValue);
+        assert.strictEqual(3, e.newValue);
         done();
       });
 
@@ -64,12 +60,33 @@ describe('ObservableObject', () => {
       o['c'] = 3;
 
       o.onDelete.take(1).subscribe(e => {
-        assert.equal('b', e.property);
-        assert.equal(2, e.value);
+        assert.strictEqual('b', e.property);
+        assert.strictEqual(2, e.value);
         done();
       });
 
       delete o['b'];
     });
   });
+
+  // describe('onApply', () => {
+  //   it('should emit when an object method is called', done => {
+  //     const object = {
+  //       prop: 0,
+  //       method: (arg: number) => {
+  //         this.prop = 1;
+  //       },
+  //     };
+  //     const o = ObservableObject.create();
+  //
+  //     o.onApply.take(1).subscribe(e => {
+  //       assert.strictEqual(object.prop, 1);
+  //       assert.deepEqual(e.argumentsList, [42]);
+  //
+  //       done();
+  //     });
+  //
+  //     object.method(42);
+  //   });
+  // });
 });
