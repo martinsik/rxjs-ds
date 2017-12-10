@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { ObservableObject } from '../dist/cjs';
+import { ObservableObject, ObservableFunction, ApplyEvent } from '../dist/cjs';
 import 'rxjs/add/operator/take';
 
 describe('ObservableObject', () => {
@@ -69,24 +69,41 @@ describe('ObservableObject', () => {
     });
   });
 
-  // describe('onApply', () => {
-  //   it('should emit when an object method is called', done => {
-  //     const object = {
-  //       prop: 0,
-  //       method: (arg: number) => {
-  //         this.prop = 1;
-  //       },
-  //     };
-  //     const o = ObservableObject.create();
-  //
-  //     o.onApply.take(1).subscribe(e => {
-  //       assert.strictEqual(object.prop, 1);
-  //       assert.deepEqual(e.argumentsList, [42]);
-  //
-  //       done();
-  //     });
-  //
-  //     object.method(42);
-  //   });
-  // });
+  describe('proxyMethods', () => {
+    const object = {
+      prop: 0,
+      method: (n: number) => {
+        const result = 2 * n;
+        this.prop = result;
+        return result;
+      },
+    };
+
+    it('proxied object methods must be invoked', done => {
+      const o = ObservableObject.create(object, true);
+
+      o.method.onApply.take(1).subscribe((e: ApplyEvent) => {
+        assert.deepEqual(e.argumentsList, [42]);
+        assert.deepEqual(e.result, 84);
+        done();
+      });
+
+      o.method(42);
+    });
+
+    it('proxied object methods must return correct value', () => {
+      const o = ObservableObject.create(object, true);
+
+      assert.strictEqual(84, o.method(42));
+    });
+
+    it('methods are not by default proxied', () => {
+      const o = ObservableObject.create(object);
+
+      console.log(o);
+
+      assert.isUndefined(o.method.onApply);
+      assert.strictEqual(84, o.method(42));
+    });
+  });
 });

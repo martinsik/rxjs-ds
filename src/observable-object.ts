@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { ObservableFunction } from './observable-function';
 
 // https://github.com/Microsoft/TypeScript/issues/10853
 // https://stackoverflow.com/questions/37714787/can-i-extend-proxy-with-an-es2015-class
@@ -30,7 +31,7 @@ export class ObservableObject {
   onKeysChanged: Observable<GetEvent>;
   onDelete: Observable<DeleteEvent>;
 
-  static create(obj: any = {}): ObservableObject {
+  static create(obj: any = {}, proxyMethods = false): ObservableObject {
     const onGet = new Subject<GetEvent>();
     const onSet = new Subject<SetEvent>();
     const onDelete = new Subject<DeleteEvent>();
@@ -58,18 +59,29 @@ export class ObservableObject {
         onDelete.next({property, value});
         return ret;
       },
-
-      // apply: (target: any, thisArg: any, argumentsList: any[]): void => {
-      //   console.log('apply');
-      //   onApply.next({ thisArg, argumentsList });
-      // }
     });
 
-    proxy.onGet = onGet;
+    if (proxyMethods) {
+      wrapMethods(obj, proxy);
+    }
+
+    Object.defineProperty(proxy, 'onGet', {
+      value: onGet,
+    });
+
+    // proxy.onGet = onGet;
     proxy.onSet = onSet;
     proxy.onDelete = onDelete;
-    // proxy.onApply = onApply;
 
     return proxy;
+  }
+}
+
+function wrapMethods(obj: any, proxy: any): void {
+  for (const prop in obj) {
+    if (typeof obj[prop] === 'function') {
+      const func = obj[prop];
+      proxy[prop] = ObservableFunction.create(func);
+    }
   }
 }

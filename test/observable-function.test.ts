@@ -29,5 +29,10 @@ describe('ObservableFunction', () => {
       const proxiedFunc = ObservableFunction.create(func2);
       proxiedFunc(42);
     });
+
+    it('should return the result of the function call', () => {
+      const proxiedFunc = ObservableFunction.create(func);
+      assert.deepEqual(proxiedFunc(42), 84);
+    });
   });
 });
