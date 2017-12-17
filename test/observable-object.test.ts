@@ -1,109 +1,109 @@
 import { assert } from 'chai';
-import { ObservableObject, ObservableFunction, ApplyEvent } from '../dist/cjs';
+import { ObservableObject, ObservableFunction, GetEvent, ApplyEvent } from '../dist/cjs';
 import 'rxjs/add/operator/take';
 
 describe('ObservableObject', () => {
   describe('onGet', () => {
     it('should emit when accessing an object property', done => {
-      const o = ObservableObject.create();
+      const { proxy, events } = ObservableObject.create();
 
-      o.onGet.take(1).subscribe(e => {
+      events.onGet.take(1).subscribe((e: GetEvent) => {
         assert.strictEqual('b', e.property);
         assert.strictEqual(2, e.value);
         done();
       });
 
-      o['a'] = 1;
-      o['b'] = 2;
-      o['c'] = 3;
+      proxy['a'] = 1;
+      proxy['b'] = 2;
+      proxy['c'] = 3;
 
-      const triggerGetter = o['b'];
+      const triggerGetter = proxy['b'];
     });
   });
 
   describe('onSet', () => {
     it('should emit when setting an object property', done => {
-      const o = ObservableObject.create();
+      const { proxy, events } = ObservableObject.create();
 
-      o.onSet.take(1).subscribe(e => {
+      events.onSet.take(1).subscribe(e => {
         assert.strictEqual('b', e.property);
         assert.isUndefined(e.oldValue);
         assert.strictEqual(2, e.newValue);
         done();
       });
 
-      o['b'] = 2; // trigger setter
+      proxy['b'] = 2; // trigger setter
     });
 
     it('should emit when overriding an object property', done => {
-      const o = ObservableObject.create();
+      const { proxy, events } = ObservableObject.create();
 
-      o['b'] = 2;
+      proxy['b'] = 2;
 
-      o.onSet.take(1).subscribe(e => {
+      events.onSet.take(1).subscribe(e => {
         assert.strictEqual('b', e.property);
         assert.strictEqual(2, e.oldValue);
         assert.strictEqual(3, e.newValue);
         done();
       });
 
-      o['b'] = 3; // trigger setter
+      proxy['b'] = 3; // trigger setter
     });
   });
 
   describe('onDelete', () => {
     it('should emit when an object property is deleted', done => {
-      const o = ObservableObject.create();
+      const { proxy, events } = ObservableObject.create();
 
-      o['a'] = 1;
-      o['b'] = 2;
-      o['c'] = 3;
+      proxy['a'] = 1;
+      proxy['b'] = 2;
+      proxy['c'] = 3;
 
-      o.onDelete.take(1).subscribe(e => {
+      events.onDelete.take(1).subscribe(e => {
         assert.strictEqual('b', e.property);
         assert.strictEqual(2, e.value);
         done();
       });
 
-      delete o['b'];
+      delete proxy['b'];
     });
   });
 
   describe('proxyMethods', () => {
     const object = {
       prop: 0,
-      method: (n: number) => {
+      multiply: (n: number) => {
         const result = 2 * n;
         this.prop = result;
         return result;
       },
     };
 
-    it('proxied object methods must be invoked', done => {
-      const o = ObservableObject.create(object, true);
+    type MethodType = (n: number) => number;
 
-      o.method.onApply.take(1).subscribe((e: ApplyEvent) => {
+    it('proxied object methods must be invoked', done => {
+      const { proxy, events, methodEvents } = ObservableObject.create(object, true);
+
+      methodEvents.multiply.onApply.take(1).subscribe((e: ApplyEvent) => {
         assert.deepEqual(e.argumentsList, [42]);
         assert.deepEqual(e.result, 84);
         done();
       });
 
-      o.method(42);
+      proxy.multiply(42);
     });
 
     it('proxied object methods must return correct value', () => {
-      const o = ObservableObject.create(object, true);
+      const { proxy, events } = ObservableObject.create(object, true);
 
-      assert.strictEqual(84, o.method(42));
+      assert.strictEqual(84, proxy.multiply(42));
     });
 
-    it('methods are not by default proxied', () => {
-      const o = ObservableObject.create(object);
+    it('methods are not proxied by default', () => {
+      const { proxy, events, methodEvents } = ObservableObject.create(object);
 
-      console.log(o);
-
-      assert.isUndefined(o.method.onApply);
-      assert.strictEqual(84, o.method(42));
+      assert.isUndefined(methodEvents);
+      assert.strictEqual(84, proxy.multiply(42));
     });
   });
 });

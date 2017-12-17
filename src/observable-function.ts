@@ -9,10 +9,16 @@ export interface ApplyEvent {
   result: any;
 }
 
-export class ObservableFunction extends Function {
-  onApply: Observable<ApplyEvent>;
 
-  static create<F extends Function>(fn: F): (ObservableFunction & F) {
+export interface ObservableFunctionEvents {
+  onApply: Observable<ApplyEvent>;
+}
+
+export class ObservableFunction<T> {
+
+  constructor(public readonly proxy: T, public readonly events: ObservableFunctionEvents) { }
+
+  static create<F extends Function>(fn: F): ObservableFunction<F> {
     const onApply = new Subject<ApplyEvent>();
 
     const proxy = new Proxy(fn, {
@@ -23,8 +29,10 @@ export class ObservableFunction extends Function {
       }
     });
 
-    proxy.onApply = onApply;
+    const events: ObservableFunctionEvents = {
+      onApply,
+    };
 
-    return proxy;
+    return new ObservableFunction(proxy, events);
   }
 }

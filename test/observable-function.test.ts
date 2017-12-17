@@ -10,15 +10,15 @@ describe('ObservableFunction', () => {
     }
 
     it('should emit when the function is called', done => {
-      const proxiedFunc = ObservableFunction.create(func);
+      const { proxy, events } = ObservableFunction.create(func);
 
-      proxiedFunc.onApply.take(1).subscribe((e: ApplyEvent) => {
+      events.onApply.take(1).subscribe((e: ApplyEvent) => {
         assert.deepEqual(e.argumentsList, [42]);
         assert.deepEqual(e.result, 84);
         done();
       });
 
-      proxiedFunc(42);
+      proxy(42);
     });
 
     it('should call the original function as well', done => {
@@ -26,13 +26,13 @@ describe('ObservableFunction', () => {
         done();
       }
 
-      const proxiedFunc = ObservableFunction.create(func2);
-      proxiedFunc(42);
+      const { proxy, events } = ObservableFunction.create(func2);
+      proxy(42);
     });
 
     it('should return the result of the function call', () => {
-      const proxiedFunc = ObservableFunction.create(func);
-      assert.deepEqual(proxiedFunc(42), 84);
+      const { proxy, events } = ObservableFunction.create(func);
+      assert.deepEqual(proxy(42), 84);
     });
   });
 });

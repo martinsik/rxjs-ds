@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { ObservableFunction } from './observable-function';
+import { ObservableFunction, ObservableFunctionEvents } from './observable-function';
 
 // https://github.com/Microsoft/TypeScript/issues/10853
 // https://stackoverflow.com/questions/37714787/can-i-extend-proxy-with-an-es2015-class
@@ -21,20 +21,32 @@ export interface DeleteEvent {
   value: any;
 }
 
-export class ObservableObject {
-
-  [key: string]: any;
-  [key: number]: any;
-
+export interface ObservableObjectEvents {
   onGet: Observable<GetEvent>;
   onSet: Observable<SetEvent>;
-  onKeysChanged: Observable<GetEvent>;
   onDelete: Observable<DeleteEvent>;
+}
 
-  static create(obj: any = {}, proxyMethods = false): ObservableObject {
+export interface ObservableObjectMethodEvents {
+  [key: string]: ObservableFunctionEvents;
+}
+
+export class ObservableObject<T> {
+
+  constructor(
+    public readonly proxy: T,
+    public readonly events: ObservableObjectEvents,
+    public readonly methodEvents?: ObservableObjectMethodEvents,
+  ) { }
+
+  static create<T extends object>(obj?: T, proxyMethods = false): ObservableObject<T> {
     const onGet = new Subject<GetEvent>();
     const onSet = new Subject<SetEvent>();
     const onDelete = new Subject<DeleteEvent>();
+
+    if (typeof obj === 'undefined') {
+      obj = {} as any;
+    }
 
     const proxy = new Proxy(obj, {
       get: (target: any, property: PropertyKey, receiver?: any) => {
@@ -61,27 +73,33 @@ export class ObservableObject {
       },
     });
 
+    let methodEvents;
     if (proxyMethods) {
-      wrapMethods(obj, proxy);
+      methodEvents = wrapMethods(obj, proxy);
     }
 
-    Object.defineProperty(proxy, 'onGet', {
-      value: onGet,
-    });
+    const events: ObservableObjectEvents = {
+      onGet,
+      onSet,
+      onDelete,
+    };
 
-    // proxy.onGet = onGet;
-    proxy.onSet = onSet;
-    proxy.onDelete = onDelete;
-
-    return proxy;
+    return new ObservableObject(proxy, events, methodEvents);
   }
 }
 
-function wrapMethods(obj: any, proxy: any): void {
+function wrapMethods(obj: any, proxy: any): ObservableObjectMethodEvents {
+  const methods: ObservableObjectMethodEvents = {};
+
   for (const prop in obj) {
     if (typeof obj[prop] === 'function') {
       const func = obj[prop];
-      proxy[prop] = ObservableFunction.create(func);
+      const proxiedMethod = ObservableFunction.create(func);
+
+      proxy[prop] = proxiedMethod.proxy;
+      methods[prop] = proxiedMethod.events;
     }
   }
+
+  return methods;
 }
