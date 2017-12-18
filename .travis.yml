@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "node"
+  - "6"
+  - "7"
+  - "8"
+
+before_script:
+  - npm install
+
+script: npm run build_cjs && npm run test_build_run
+
+cache:
+  directories:
+    - "node_modules"
