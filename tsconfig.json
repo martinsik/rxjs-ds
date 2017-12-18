@@ -15,7 +15,7 @@
     ]
   },
   "include": [
-    "src/index.ts"
+    "dist/package/src/index.ts"
   ],
   "exclude": [
     "node_modules",
