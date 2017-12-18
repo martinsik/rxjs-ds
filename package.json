@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "clear": "rm -rf ./dist",
-    "build": "npm run clear && tsc",
+    "build": "tsc",
     "bundle": "rollup -c",
     "build_bundle": "npm run clear && mkdir -p ./dist/package && cp -R ./src ./dist/package && npm run build && npm run bundle && cp package.json ./dist/package",
     "clear_test": "rm -rf ./test-js",

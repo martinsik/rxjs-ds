@@ -1,16 +1,17 @@
-const Rx = require('rxjs');
 const RxJS_DS = require('../dist/package/bundle/rxjs-ds.bundle');
 const ObservableObject = RxJS_DS.ObservableObject;
 
-const { proxy, events } = ObservableObject.create();
+const proxied = ObservableObject.create();
+const events = proxied.events;
+const object = proxied.proxy;
 
-events.onGet.take(1).subscribe(console.log);
+events.onGet.subscribe(console.log);
 
-proxy['a'] = 1;
-proxy['b'] = 2;
-proxy['c'] = 3;
+object['a'] = 1;
+object['b'] = 2;
+object['c'] = 3;
 
-const _ = proxy['b'];
+const _ = object['b'];
 
 // Prints the following:
 // { property: 'b', value: 2 }
