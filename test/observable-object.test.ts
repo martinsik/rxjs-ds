@@ -3,6 +3,10 @@ import { ObservableObject, GetEvent, SetEvent, ApplyEvent } from '../dist/cjs';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/skip';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
 
 describe('ObservableObject', () => {
 
@@ -37,6 +41,7 @@ describe('ObservableObject', () => {
       events.onGet.take(1).subscribe((e: GetEvent) => {
         assert.strictEqual('b', e.property);
         assert.strictEqual(2, e.value);
+        assert.strictEqual(obj, e.target);
         done();
       });
 
@@ -185,6 +190,77 @@ describe('ObservableObject', () => {
         });
 
         proxy[1] = 'd'; // trigger setter
+      });
+    });
+
+    describe('Array.length', () => {
+      it('should be able to detect length change by calling push()', done => {
+        let counter = 0;
+        const array: string[] = [];
+        const { proxy, events } = ObservableObject.create(array);
+
+        events.onSet
+          .map((e: SetEvent) => e.target.length)
+          .distinctUntilChanged()
+          .take(4)
+          .subscribe((length: number) => {
+            if (counter === 0) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 1);
+              counter++;
+            } else if (counter === 1) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 2);
+              counter++;
+            } else if (counter === 2) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 3);
+              counter++;
+            } else if (counter === 3) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 1);
+              done();
+            }
+          });
+
+        proxy.push('a', 'b', 'c');
+        proxy.splice(1, 2); // remove one item
+      });
+
+      it('should be able to detect length change by setting item at indices', done => {
+        let counter = 0;
+        const array: string[] = [];
+        const { proxy, events } = ObservableObject.create(array);
+
+        events.onSet
+          .map((e: SetEvent) => e.target.length)
+          .distinctUntilChanged()
+          .take(4)
+          .subscribe((length: number) => {
+            if (counter === 0) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 1);
+              counter++;
+            } else if (counter === 1) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 2);
+              counter++;
+            } else if (counter === 2) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 3);
+              counter++;
+            } else if (counter === 3) {
+              assert.strictEqual(array.length, length);
+              assert.strictEqual(length, 1);
+              done();
+            }
+          });
+
+        proxy[0] = 'a';
+        proxy[1] = 'b';
+        proxy[2] = 'c';
+
+        proxy.splice(1, 2); // remove one item
       });
     });
   });

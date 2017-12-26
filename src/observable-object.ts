@@ -8,17 +8,20 @@ import { ObservableFunction, ObservableFunctionEvents } from './observable-funct
 export interface GetEvent {
   property: PropertyKey;
   value: any;
+  target: any;
 }
 
 export interface SetEvent {
   property: PropertyKey;
   oldValue: any;
   newValue: any;
+  target: any;
 }
 
 export interface DeleteEvent {
   property: PropertyKey;
   value: any;
+  target: any;
 }
 
 export interface ObservableObjectEvents {
@@ -52,7 +55,7 @@ export class ObservableObject<T> {
       get: (target: any, property: PropertyKey, receiver?: any) => {
         const value = target[property];
 
-        onGet.next({property, value});
+        onGet.next({property, value, target});
         return value;
       },
 
@@ -60,7 +63,7 @@ export class ObservableObject<T> {
         const oldValue = target[property];
         target[property] = newValue;
 
-        onSet.next({property, oldValue, newValue});
+        onSet.next({property, oldValue, newValue, target});
         return true;
       },
 
@@ -68,7 +71,7 @@ export class ObservableObject<T> {
         const value = target[property];
         const ret = delete target[property];
 
-        onDelete.next({property, value});
+        onDelete.next({property, value, target});
         return ret;
       },
     });

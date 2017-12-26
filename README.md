@@ -8,7 +8,7 @@ A library for creating observable data structures using RxJS 5 and [window.Proxy
 
 The intended way of creating proxies is via the static `ObservableObject.create` method.
 
-```
+```javascript
 // create an ObservableObject from an empty object `{}` 
 const proxied = ObservableObject.create();
 // The same as using: ObservableObject.create({});
@@ -18,9 +18,9 @@ const obj = { a: 1, b: 2, c: 3 };
 const proxied = ObservableObject.create(obj);
 ```
 
-Each `ObservableObject` consists of the proxy object (`proxy`) and a map of events (`events`).
+Each `ObservableObject` consists of the proxy object (`proxy` property) and a map of events (`events` property).
 
-```
+```javascript
 const proxied = ObservableObject.create();
 const events = proxied.events;
 const proxy = proxied.proxy;
@@ -33,7 +33,7 @@ If you pass the optional initialized object with `ObservableObject.create(obj);`
 
 ## API
 
-```
+```typescript
 ObservableObject.create<T extends object>(obj?: T, proxyMethods = false): ObservableObject<T>)
 ```
 
@@ -41,7 +41,7 @@ ObservableObject.create<T extends object>(obj?: T, proxyMethods = false): Observ
 
 Observe events when accessing an object property.
 
-```
+```javascript
 const proxied = ObservableObject.create();
 const events = proxied.events;
 const object = proxied.proxy;

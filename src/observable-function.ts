@@ -7,6 +7,7 @@ export interface ApplyEvent {
   thisArg: any;
   argumentsList: any[];
   result: any;
+  target: any;
 }
 
 
@@ -24,7 +25,7 @@ export class ObservableFunction<T> {
     const proxy = new Proxy(fn, {
       apply: (target: any, thisArg: any, argumentsList: any[]): void => {
         const result = target.apply(thisArg, argumentsList);
-        onApply.next({ thisArg, argumentsList, result });
+        onApply.next({ thisArg, argumentsList, result, target });
         return result;
       }
     });
