@@ -15,14 +15,15 @@ export interface ObservableFunctionEvents {
   onApply: Observable<ApplyEvent>;
 }
 
-export class ObservableFunction<T> {
+export class ObservableFunction<F extends Function> {
 
-  constructor(public readonly proxy: T, public readonly events: ObservableFunctionEvents) { }
+  public readonly proxy: F;
+  public readonly events: ObservableFunctionEvents;
 
-  static create<F extends Function>(fn: F): ObservableFunction<F> {
+  constructor(fn: F) {
     const onApply = new Subject<ApplyEvent>();
 
-    const proxy = new Proxy(fn, {
+    this.proxy = new Proxy(fn, {
       apply: (target: any, thisArg: any, argumentsList: any[]): void => {
         const result = target.apply(thisArg, argumentsList);
         onApply.next({ thisArg, argumentsList, result, target });
@@ -30,10 +31,8 @@ export class ObservableFunction<T> {
       }
     });
 
-    const events: ObservableFunctionEvents = {
+    this.events = {
       onApply,
     };
-
-    return new ObservableFunction(proxy, events);
   }
 }

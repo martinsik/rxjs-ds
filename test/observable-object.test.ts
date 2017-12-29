@@ -14,7 +14,7 @@ describe('ObservableObject', () => {
 
     describe('onGet', () => {
       it('should emit when accessing an object property', done => {
-        const { proxy, events } = ObservableObject.create();
+        const { proxy, events } = new ObservableObject();
 
         events.onGet.take(1).subscribe((e: GetEvent) => {
           assert.strictEqual('b', e.property);
@@ -36,7 +36,7 @@ describe('ObservableObject', () => {
         b: 2,
         c: 3,
       };
-      const { proxy, events } = ObservableObject.create(obj);
+      const { proxy, events } = new ObservableObject(obj);
 
       events.onGet.take(1).subscribe((e: GetEvent) => {
         assert.strictEqual('b', e.property);
@@ -50,7 +50,7 @@ describe('ObservableObject', () => {
 
     describe('onSet', () => {
       it('should emit when setting an object property', done => {
-        const { proxy, events } = ObservableObject.create();
+        const { proxy, events } = new ObservableObject();
 
         events.onSet.take(1).subscribe(e => {
           assert.strictEqual('b', e.property);
@@ -63,7 +63,7 @@ describe('ObservableObject', () => {
       });
 
       it('should emit when overriding an object property', done => {
-        const { proxy, events } = ObservableObject.create();
+        const { proxy, events } = new ObservableObject();
 
         proxy['b'] = 2;
 
@@ -80,7 +80,7 @@ describe('ObservableObject', () => {
 
     describe('onDelete', () => {
       it('should emit when an object property is deleted', done => {
-        const { proxy, events } = ObservableObject.create();
+        const { proxy, events } = new ObservableObject();
 
         proxy['a'] = 1;
         proxy['b'] = 2;
@@ -100,7 +100,7 @@ describe('ObservableObject', () => {
   describe('array', () => {
     describe('onGet', () => {
       it('should emit when accessing an array item', done => {
-        const { proxy, events } = ObservableObject.create([]);
+        const { proxy, events } = new ObservableObject([]);
 
         events.onGet.take(1).subscribe((e: GetEvent) => {
           assert.strictEqual('1', e.property);
@@ -118,7 +118,7 @@ describe('ObservableObject', () => {
     });
 
     it('should emit when appending items with the Array.push() method', done => {
-      const { proxy, events } = ObservableObject.create([]);
+      const { proxy, events } = new ObservableObject([]);
       let counter = 0;
 
       events.onGet.take(1).subscribe((e: GetEvent) => {
@@ -165,7 +165,7 @@ describe('ObservableObject', () => {
 
     describe('onSet', () => {
       it('should emit when setting an item on an array index', done => {
-        const { proxy, events } = ObservableObject.create(new Array(5));
+        const { proxy, events } = new ObservableObject(new Array(5));
 
         events.onSet.take(1).subscribe((e: SetEvent) => {
           assert.strictEqual('1', e.property);
@@ -178,7 +178,7 @@ describe('ObservableObject', () => {
       });
 
       it('should emit when overriding an array index', done => {
-        const { proxy, events } = ObservableObject.create([]);
+        const { proxy, events } = new ObservableObject([]);
 
         proxy.push('a', 'b', 'c');
 
@@ -197,7 +197,7 @@ describe('ObservableObject', () => {
       it('should be able to detect length change by calling push()', done => {
         let counter = 0;
         const array: string[] = [];
-        const { proxy, events } = ObservableObject.create(array);
+        const { proxy, events } = new ObservableObject(array);
 
         events.onSet
           .map((e: SetEvent) => e.target.length)
@@ -224,13 +224,13 @@ describe('ObservableObject', () => {
           });
 
         proxy.push('a', 'b', 'c');
-        proxy.splice(1, 2); // remove one item
+        proxy.splice(1, 2); // remove two items
       });
 
       it('should be able to detect length change by setting item at indices', done => {
         let counter = 0;
         const array: string[] = [];
-        const { proxy, events } = ObservableObject.create(array);
+        const { proxy, events } = new ObservableObject(array);
 
         events.onSet
           .map((e: SetEvent) => e.target.length)
@@ -260,7 +260,7 @@ describe('ObservableObject', () => {
         proxy[1] = 'b';
         proxy[2] = 'c';
 
-        proxy.splice(1, 2); // remove one item
+        proxy.splice(1, 2); // remove two items
       });
     });
   });
@@ -278,7 +278,7 @@ describe('ObservableObject', () => {
     type MethodType = (n: number) => number;
 
     it('proxied object methods must be invoked', done => {
-      const { proxy, events, methodEvents } = ObservableObject.create(object, true);
+      const { proxy, events, methodEvents } = new ObservableObject(object, true);
 
       methodEvents.multiply.onApply.take(1).subscribe((e: ApplyEvent) => {
         assert.deepEqual(e.argumentsList, [42]);
@@ -290,13 +290,13 @@ describe('ObservableObject', () => {
     });
 
     it('proxied object methods must return correct value', () => {
-      const { proxy, events } = ObservableObject.create(object, true);
+      const { proxy, events } = new ObservableObject(object, true);
 
       assert.strictEqual(84, proxy.multiply(42));
     });
 
     it('methods are not proxied by default', () => {
-      const { proxy, events, methodEvents } = ObservableObject.create(object);
+      const { proxy, events, methodEvents } = new ObservableObject(object);
 
       assert.isUndefined(methodEvents);
       assert.strictEqual(84, proxy.multiply(42));

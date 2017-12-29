@@ -36,22 +36,16 @@ export interface ObservableObjectMethodEvents {
 
 export class ObservableObject<T> {
 
-  constructor(
-    public readonly proxy: T,
-    public readonly events: ObservableObjectEvents,
-    public readonly methodEvents?: ObservableObjectMethodEvents,
-  ) { }
+  public readonly proxy: T;
+  public readonly events: ObservableObjectEvents;
+  public readonly methodEvents?: ObservableObjectMethodEvents;
 
-  static create<T extends object>(obj?: T, proxyMethods = false): ObservableObject<T> {
+  constructor(object: T = {} as any, proxyMethods = false) {
     const onGet = new Subject<GetEvent>();
     const onSet = new Subject<SetEvent>();
     const onDelete = new Subject<DeleteEvent>();
 
-    if (typeof obj === 'undefined') {
-      obj = {} as any;
-    }
-
-    const proxy = new Proxy(obj, {
+    const proxy = new Proxy(object, {
       get: (target: any, property: PropertyKey, receiver?: any) => {
         const value = target[property];
 
@@ -78,16 +72,16 @@ export class ObservableObject<T> {
 
     let methodEvents;
     if (proxyMethods) {
-      methodEvents = wrapMethods(obj, proxy);
+      this.methodEvents = wrapMethods(object, proxy);
     }
 
-    const events: ObservableObjectEvents = {
+    this.events = {
       onGet,
       onSet,
       onDelete,
     };
 
-    return new ObservableObject(proxy, events, methodEvents);
+    this.proxy = proxy;
   }
 }
 
@@ -97,7 +91,7 @@ function wrapMethods(obj: any, proxy: any): ObservableObjectMethodEvents {
   for (const prop in obj) {
     if (typeof obj[prop] === 'function') {
       const func = obj[prop];
-      const proxiedMethod = ObservableFunction.create(func);
+      const proxiedMethod = new ObservableFunction(func);
 
       proxy[prop] = proxiedMethod.proxy;
       methods[prop] = proxiedMethod.events;
