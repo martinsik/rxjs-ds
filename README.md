@@ -165,6 +165,10 @@ array.splice(1, 2); // remove two items
 // 1
 ```
 
+See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts) and [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)
+
+Observing setters/getters works the same as with objects.
+
 ### Function
 
 Functions can be proxied as well via the `ObservableFunction` class. The `onApply` event is triggered when invoking the proxied function.
@@ -190,6 +194,4 @@ proxy(42);
 // { thisArg: undefined, argumentsList: [ 42 ], result: 84, target: [Function: func] }
 ```
 
-See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts) and [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)
-
-Observing setters/getters works the same as with objects.
+See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_05.ts) and [demo/demo_05.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_05.js)
