@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/martinsik/rxjs-ds.svg?branch=master)](https://travis-ci.org/martinsik/rxjs-ds)
 
-A library for creating observable data structures using RxJS 5 and [window.Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects.
+A library for creating observable data structures using RxJS 5 and [window.Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects. Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
 
 ## Usage
 
@@ -49,8 +49,16 @@ See more examples with arrays bellow.
 
 ## API
 
+Observable proxy for wrapping any object. 
+
 ```typescript
-ObservableObject(object: T = {}, proxyMethods = false)
+ObservableObject<T>(object: T = {}, proxyMethods = false)
+```
+
+Observable proxy for wrapping functions.
+
+```typescript
+ObservableFunction<F extends Function>(fn: F)
 ```
 
 ## Examples
@@ -155,6 +163,31 @@ array.splice(1, 2); // remove two items
 // 2
 // 3
 // 1
+```
+
+### Function
+
+Functions can be proxied as well via the `ObservableFunction` class. The `onApply` event is triggered when invoking the proxied function.
+
+```typescript
+import { ObservableFunction, ApplyEvent } from 'rxjs-ds';
+import 'rxjs/add/operator/take';
+
+function func(n: number) {
+  return 2 * n;
+}
+
+const { proxy, events } = new ObservableFunction(func);
+
+events.onApply.take(1).subscribe((e: ApplyEvent) => {
+  console.log(e);
+});
+
+// We need to invoke the proxied function, not the  
+proxy(42);
+
+// Prints the following:
+// { thisArg: undefined, argumentsList: [ 42 ], result: 84, target: [Function: func] }
 ```
 
 See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts) and [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)

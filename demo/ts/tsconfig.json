@@ -15,6 +15,7 @@
   },
   "files": [
     "demo_01.ts",
-    "demo_04.ts"
+    "demo_04.ts",
+    "demo_05.ts"
   ]
 }
