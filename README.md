@@ -8,7 +8,9 @@ A library for creating observable data structures using RxJS 5 and [window.Proxy
 
 The intended way of creating proxies is via the `ObservableObject` class.
 
-```javascript
+```typescript
+import { ObservableObject } from 'rxjs-ds';
+
 // create an ObservableObject from an empty object `{}` 
 const proxied = new ObservableObject();
 // The same as: new ObservableObject({});
@@ -20,7 +22,9 @@ const proxied = new ObservableObject(obj);
 
 Each `ObservableObject` consists of the proxy object (`proxy` property) and the map of events (`events` property).
 
-```javascript
+```typescript
+import { ObservableObject } from 'rxjs-ds';
+
 const proxied = new ObservableObject();
 const events = proxied.events;
 const proxy = proxied.proxy;
@@ -56,9 +60,11 @@ ObservableObject(object: T = {}, proxyMethods = false)
 Observe events when getting an object property:
 
 ```typescript
+import { ObservableObject, GetEvent } from 'rxjs-ds';
+
 const proxied = new ObservableObject();
 const events = proxied.events;
-const object = proxied.proxy;
+const proxy = proxied.proxy;
 
 events.onGet.subscribe((e: GetEvent) => {
   console.log(e);
@@ -74,18 +80,20 @@ const _ = proxy['b'];
 // { property: 'b', value: 2, target: { a: 1, b: 2, c: 3 } }
 ```
 
-See demo: [demo/demo_01.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_01.js)
+See demos: [demo/ts/demo_01.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_01.ts) and [demo/demo_01.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_01.js)
 
 Observe events when setting/overriding an object property:
 
 ```typescript
-const { proxy, events } = new ObservableObject();
+import { ObservableObject } from 'rxjs-ds';
+
+const { proxy: object, events } = new ObservableObject();
 
 events.onSet.subscribe(console.log);
 
-proxy['a'] = 1;
-proxy['b'] = 2;
-proxy['a'] = 42;
+object['a'] = 1;
+object['b'] = 2;
+object['a'] = 42;
 
 // Prints the following:
 // { property: 'a', oldValue: undefined, newValue: 1, target: { a: 1 } }
@@ -98,19 +106,21 @@ See demo: [demo/demo_02.js](https://github.com/martinsik/rxjs-ds/blob/master/dem
 Observing changes on an already existing object:
 
 ```typescript
+import { ObservableObject } from 'rxjs-ds';
+
 const object = {
   'a': 1,
   'b': 2,
   'c': 3,
 };
 
-const { proxy, events } = new ObservableObject(object);
+const { proxy: object, events } = new ObservableObject(object);
 
 events.onSet.subscribe(console.log);
 
 // Note that we have to use `proxy` instead of `object`.
 // Modifying properties on `object` won't trigger the event.
-proxy['b'] = 42;
+object['b'] = 42;
 
 // Prints the following:
 // { property: 'b', oldValue: 2, newValue: 42, target: { a: 1, b: 42, c: 3 } }
@@ -123,6 +133,11 @@ See demo: [demo/demo_03.js](https://github.com/martinsik/rxjs-ds/blob/master/dem
 Observing array length changes:
 
 ```typescript
+import { ObservableObject, SetEvent } from 'rxjs-ds';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/distinctUntilChanged';
+// Works with RxJS 5.5 and lettable operators as well
+
 const { proxy: array, events } = new ObservableObject([]);
 
 events.onSet
@@ -142,6 +157,6 @@ array.splice(1, 2); // remove two items
 // 1
 ```
 
-See demo: [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)
+See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts) and [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)
 
 Observing setters/getters works the same as with objects.

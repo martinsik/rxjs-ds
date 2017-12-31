@@ -6,13 +6,14 @@
   "scripts": {
     "clear": "rm -rf ./dist",
     "build": "tsc",
-    "bundle": "rollup -c",
+    "bundle": "rollup -c && google-closure-compiler-js --createSourceMap=true ./dist/package/bundle/rxjs-ds.js",
     "build_bundle": "npm run clear && mkdir -p ./dist/package && cp -R ./src ./dist/package && npm run build && npm run bundle && cp package.json ./dist/package",
     "clear_test": "rm -rf ./test-js",
     "build_cjs": "npm run clear && tsc -p tsconfig-cjs.json",
     "build_test": "npm run clear_test && tsc -p test/tsconfig.json",
     "test": "mocha ./test-js --reporter list",
-    "test_build_run": "npm run build_test && npm run test"
+    "test_build_run": "npm run build_test && npm run test",
+    "build_demos": "rm ./demo/ts/demo_*.js && tsc -p ./demo/ts/tsconfig.json"
   },
   "author": "",
   "license": "MIT",
@@ -23,8 +24,10 @@
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.43",
     "chai": "^4.1.2",
+    "google-closure-compiler-js": "^20171203.0.0",
     "mocha": "^4.0.1",
     "rollup": "^0.50.0",
+    "rollup-plugin-commonjs": "^8.2.6",
     "rxjs": "^5.4.0",
     "typescript": "^2.5.3"
   }

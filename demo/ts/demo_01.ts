@@ -1,11 +1,12 @@
-const RxJS_DS = require('../dist/package/bundle/rxjs-ds.bundle');
-const ObservableObject = RxJS_DS.ObservableObject;
+import { ObservableObject, GetEvent } from '../../dist/package';
 
 const proxied = new ObservableObject();
 const events = proxied.events;
-const object = proxied.proxy;
+const object = proxied.proxy as {[key: string]: any};
 
-proxied.events.onGet.subscribe(console.log);
+proxied.events.onGet.subscribe((e: GetEvent) => {
+  console.log(e);
+});
 
 object['a'] = 1;
 object['b'] = 2;

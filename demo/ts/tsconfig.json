@@ -6,19 +6,15 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "outDir": "dist/package",
-    "sourceMap": true,
-    "declaration": true,
+    "sourceMap": false,
+    "declaration": false,
     "lib": [
       "ES6",
       "DOM"
     ]
   },
-  "include": [
-    "dist/package/src/index.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/*.test.ts"
+  "files": [
+    "demo_01.ts",
+    "demo_04.ts"
   ]
 }
