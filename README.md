@@ -2,7 +2,17 @@
 
 [![Build Status](https://travis-ci.org/martinsik/rxjs-ds.svg?branch=master)](https://travis-ci.org/martinsik/rxjs-ds)
 
-A library for creating observable data structures using RxJS 5 and [window.Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects. Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
+A library for creating observable data structures using RxJS 5 and [`window.Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects (see availability at [https://caniuse.com/#search=Proxy](https://caniuse.com/#search=Proxy)). Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
+
+Check out the live play ground: https://jsfiddle.net/7jofvccb/1/
+
+## Installation
+
+Install via NPM.
+
+```bash
+npm i --save rxjs-ds
+```
 
 ## Usage
 
@@ -88,7 +98,7 @@ const _ = proxy['b'];
 // { property: 'b', value: 2, target: { a: 1, b: 2, c: 3 } }
 ```
 
-See demos: [demo/ts/demo_01.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_01.ts) and [demo/demo_01.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_01.js)
+See demos: [demo/ts/demo_01.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_01.ts), [demo/demo_01.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_01.js) and [jsfiddle.net/x49qx05m](https://jsfiddle.net/x49qx05m/9/)
 
 Observe events when setting/overriding an object property:
 
