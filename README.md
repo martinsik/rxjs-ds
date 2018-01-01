@@ -4,7 +4,7 @@
 
 A library for creating observable data structures using RxJS 5 and [`window.Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects (see availability at [https://caniuse.com/#search=Proxy](https://caniuse.com/#search=Proxy)). Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
 
-Check out the live play ground: https://jsfiddle.net/7jofvccb/1/
+Check out the live playground: https://jsfiddle.net/7jofvccb/1/
 
 ## Installation
 
@@ -119,7 +119,7 @@ object['a'] = 42;
 // { property: 'a', oldValue: 1, newValue: 42, target: { a: 42, b: 2 } }
 ```
 
-See demo: [demo/demo_02.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_02.js)
+See demo: [demo/demo_02.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_02.js) and [jsfiddle.net/7jofvccb](https://jsfiddle.net/7jofvccb/1/)
 
 Observing changes on an already existing object:
 
@@ -175,7 +175,7 @@ array.splice(1, 2); // remove two items
 // 1
 ```
 
-See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts) and [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js)
+See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts), [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js) and [jsfiddle.net/71cvcbfu](https://jsfiddle.net/71cvcbfu/5/)
 
 Observing setters/getters works the same as with objects.
 
@@ -204,4 +204,4 @@ proxy(42);
 // { thisArg: undefined, argumentsList: [ 42 ], result: 84, target: [Function: func] }
 ```
 
-See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_05.ts) and [demo/demo_05.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_05.js)
+See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_05.ts), [demo/demo_05.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_05.js) and [jsfiddle.net/8zs654db](https://jsfiddle.net/8zs654db/5/)
