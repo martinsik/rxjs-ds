@@ -13,6 +13,7 @@
     "build_test": "npm run clear_test && tsc -p test/tsconfig.json",
     "test": "mocha ./test-js --reporter list",
     "test_build_run": "npm run build_test && npm run test",
+    "test_build_cjs_run": "npm run build_cjs && npm run test_build_run",
     "build_demos": "rm ./demo/ts/demo_*.js && tsc -p ./demo/ts/tsconfig.json"
   },
   "author": "Martin Sikora",

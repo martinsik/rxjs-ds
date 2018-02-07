@@ -205,3 +205,7 @@ proxy(42);
 ```
 
 See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_05.ts), [demo/demo_05.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_05.js) and [jsfiddle.net/8zs654db](https://jsfiddle.net/8zs654db/5/)
+
+## Tests
+
+

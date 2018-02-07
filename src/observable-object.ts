@@ -5,32 +5,36 @@ import { ObservableFunction, ObservableFunctionEvents } from './observable-funct
 // https://github.com/Microsoft/TypeScript/issues/10853
 // https://stackoverflow.com/questions/37714787/can-i-extend-proxy-with-an-es2015-class
 
-export interface GetEvent {
+declare const Proxy: any;
+export type PropertyKey = string;
+
+export interface ProxyEvent {
   property: PropertyKey;
-  value: any;
   target: any;
 }
 
-export interface SetEvent {
+export interface GetEvent extends ProxyEvent {
+  value: any;
+}
+
+export interface SetEvent extends ProxyEvent {
   property: PropertyKey;
   oldValue: any;
   newValue: any;
-  target: any;
 }
 
-export interface DeleteEvent {
+export interface DeleteEvent extends ProxyEvent {
   property: PropertyKey;
   value: any;
-  target: any;
 }
 
 export interface ObservableObjectEvents {
-  onGet: Observable<GetEvent>;
-  onSet: Observable<SetEvent>;
-  onDelete: Observable<DeleteEvent>;
+  onGet: Subject<GetEvent>;
+  onSet: Subject<SetEvent>;
+  onDelete: Subject<DeleteEvent>;
 }
 
-export interface ObservableObjectMethodEvents {
+export interface ObservableObjectPropertyEvents {
   [key: string]: ObservableFunctionEvents;
 }
 
@@ -38,12 +42,20 @@ export class ObservableObject<T> {
 
   public readonly proxy: T;
   public readonly events: ObservableObjectEvents;
-  public readonly methodEvents?: ObservableObjectMethodEvents;
+  // public readonly propertyEvents?: ObservableObjectPropertyEvents;
 
-  constructor(object: T = {} as any, proxyMethods = false) {
-    const onGet = new Subject<GetEvent>();
-    const onSet = new Subject<SetEvent>();
-    const onDelete = new Subject<DeleteEvent>();
+  constructor(object: T = {} as any, wrapProxiableProperties = true, parentEvents?: ObservableObjectEvents) {
+    let onGet: Subject<GetEvent>;
+    let onSet: Subject<SetEvent>;
+    let onDelete: Subject<DeleteEvent>;
+
+    if (parentEvents) {
+      ({ onGet, onSet, onDelete } = parentEvents);
+    } else {
+      onGet = new Subject<GetEvent>();
+      onSet = new Subject<SetEvent>();
+      onDelete = new Subject<DeleteEvent>();
+    }
 
     const proxy = new Proxy(object, {
       get: (target: any, property: PropertyKey, receiver?: any) => {
@@ -70,33 +82,40 @@ export class ObservableObject<T> {
       },
     });
 
-    let methodEvents;
-    if (proxyMethods) {
-      this.methodEvents = wrapMethods(object, proxy);
-    }
-
     this.events = {
       onGet,
       onSet,
       onDelete,
     };
 
+    let methodEvents;
+    if (wrapProxiableProperties) {
+      const o = object as any;
+      const nestedObjects = Object.keys(o).filter(property => typeof o[property] === 'object');
+      for (let property of nestedObjects) {
+        const nestedProxy = new ObservableObject(o[property], true, parentEvents ? parentEvents : this.events);
+        proxy[property] = nestedProxy.proxy;
+      }
+
+      // this.propertyEvents = wrapProperties(object, proxy);
+    }
+
     this.proxy = proxy;
   }
 }
 
-function wrapMethods(obj: any, proxy: any): ObservableObjectMethodEvents {
-  const methods: ObservableObjectMethodEvents = {};
-
-  for (const prop in obj) {
-    if (typeof obj[prop] === 'function') {
-      const func = obj[prop];
-      const proxiedMethod = new ObservableFunction(func);
-
-      proxy[prop] = proxiedMethod.proxy;
-      methods[prop] = proxiedMethod.events;
-    }
-  }
-
-  return methods;
-}
+// function wrapProperties(obj: any, proxy: any): ObservableObjectPropertyEvents {
+//   const methods: ObservableObjectPropertyEvents = {};
+//
+//   for (const prop in obj) {
+//     if (typeof obj[prop] === 'function') {
+//       const func = obj[prop];
+//       const proxiedMethod = new ObservableFunction(func);
+//
+//       proxy[prop] = proxiedMethod.proxy;
+//       methods[prop] = proxiedMethod.events;
+//     }
+//   }
+//
+//   return methods;
+// }
