@@ -137,9 +137,8 @@ describe('ObservableObject', () => {
             done();
           });
 
-        const _2 = proxy['other']['another']['prop5'];
+        const _2 = proxy.other.another.prop5;
         assert.strictEqual(42, _2);
-
       });
     });
   });
@@ -324,29 +323,28 @@ describe('ObservableObject', () => {
 
     type MethodType = (n: number) => number;
 
-    // it('proxied object methods must be invoked', done => {
-    //   const { proxy, events, propertyEvents } = new ObservableObject(object, true);
-    //
-    //   propertyEvents.multiply.onApply.take(1).subscribe((e: ApplyEvent) => {
-    //     assert.deepEqual(e.argumentsList, [42]);
-    //     assert.deepEqual(e.result, 84);
-    //     done();
-    //   });
-    //
-    //   proxy.multiply(42);
-    // });
-    //
+    it('proxied object methods must be invoked', done => {
+      const { proxy, events } = new ObservableObject(object, true);
+
+      events.onApply.take(1).subscribe((e: ApplyEvent) => {
+        assert.deepEqual(e.argumentsList, [42]);
+        assert.deepEqual(e.result, 84);
+        done();
+      });
+
+      proxy.multiply(42);
+    });
+
     it('proxied object methods must return correct value', () => {
       const { proxy, events } = new ObservableObject(object, true);
 
       assert.strictEqual(84, proxy.multiply(42));
     });
-    //
-    // it('methods are not proxied by default', () => {
-    //   const { proxy, events, propertyEvents } = new ObservableObject(object);
-    //
-    //   assert.isUndefined(propertyEvents);
-    //   assert.strictEqual(84, proxy.multiply(42));
-    // });
+
+    it('methods are not proxied by default', () => {
+      const { proxy, events } = new ObservableObject(object);
+
+      assert.strictEqual(84, proxy.multiply(42));
+    });
   });
 });

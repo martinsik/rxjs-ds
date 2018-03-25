@@ -10,7 +10,6 @@ export interface ApplyEvent {
   target: any;
 }
 
-
 export interface ObservableFunctionEvents {
   onApply: Observable<ApplyEvent>;
 }
@@ -20,8 +19,14 @@ export class ObservableFunction<F extends Function> {
   public readonly proxy: F;
   public readonly events: ObservableFunctionEvents;
 
-  constructor(fn: F) {
-    const onApply = new Subject<ApplyEvent>();
+  constructor(fn: F, parentEvents?: ObservableFunctionEvents) {
+    let onApply: Subject<ApplyEvent>;
+
+    if (parentEvents) {
+      onApply = parentEvents.onApply as Subject<ApplyEvent>;
+    } else {
+      onApply = new Subject<ApplyEvent>();
+    }
 
     this.proxy = new Proxy(fn, {
       apply: (target: any, thisArg: any, argumentsList: any[]): void => {
