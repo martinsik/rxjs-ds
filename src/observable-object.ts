@@ -34,10 +34,6 @@ export interface ObservableObjectEvents extends ObservableFunctionEvents {
   onDelete: Observable<DeleteEvent>;
 }
 
-export interface ObservableObjectPropertyEvents {
-  [key: string]: ObservableFunctionEvents;
-}
-
 export class ObservableObject<T> {
 
   public readonly proxy: T;

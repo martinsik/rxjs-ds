@@ -1,12 +1,12 @@
 {
-  "name": "rxjs-ds",
-  "version": "1.0.0",
-  "description": "Observable data structures combining RxJS 5 and window.Proxy",
+  "name": "rxjs-observable-object",
+  "version": "0.1.0",
+  "description": "Observable objects with RxJS 5 and window.Proxy",
   "main": "index.js",
   "scripts": {
     "clear": "rm -rf ./dist",
     "build": "tsc",
-    "bundle": "rollup -c && google-closure-compiler-js --createSourceMap=true ./dist/package/bundle/rxjs-ds.js | exorcist ./dist/package/bundle/rxjs-ds.min.js.map > ./dist/package/bundle/rxjs-ds.min.js",
+    "bundle": "rollup -c && google-closure-compiler-js --createSourceMap=true ./dist/package/bundle/rxjs-observable-object.js | exorcist ./dist/package/bundle/rxjs-observable-object.min.js.map > ./dist/package/bundle/rxjs-observable-object.min.js",
     "build_bundle": "npm run clear && mkdir -p ./dist/package && cp -R ./src ./dist/package && npm run build && npm run bundle && cp package.json ./dist/package && cp README.md ./dist/package/README.md",
     "clear_test": "rm -rf ./test-js",
     "build_cjs": "npm run clear && tsc -p tsconfig-cjs.json",

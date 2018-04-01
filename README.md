@@ -1,8 +1,8 @@
-# RxJS-DS
+# RxJS Observable Object
 
-[![Build Status](https://travis-ci.org/martinsik/rxjs-ds.svg?branch=master)](https://travis-ci.org/martinsik/rxjs-ds)
+[![Build Status](https://travis-ci.org/martinsik/rxjs-observable-object.svg?branch=master)](https://travis-ci.org/martinsik/rxjs-observable-object)
 
-A library for creating observable data structures using RxJS 5 and [`window.Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects (see availability at [https://caniuse.com/#search=Proxy](https://caniuse.com/#search=Proxy)). Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
+A library for creating observable objects using RxJS 5 and [`window.Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects (see availability at [https://caniuse.com/#search=Proxy](https://caniuse.com/#search=Proxy)). Works with both RxJS 5.4 and RxJS 5.5 (lettable operators).
 
 Check out the live playground: https://jsfiddle.net/7jofvccb/1/
 
@@ -11,7 +11,7 @@ Check out the live playground: https://jsfiddle.net/7jofvccb/1/
 Install via NPM.
 
 ```bash
-npm i --save rxjs-ds
+npm i --save rxjs-observable-object
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ npm i --save rxjs-ds
 The intended way of creating proxies is via the `ObservableObject` class.
 
 ```typescript
-import { ObservableObject } from 'rxjs-ds';
+import { ObservableObject } from 'rxjs-observable-object';
 
 // create an ObservableObject from an empty object `{}` 
 const proxied = new ObservableObject();
@@ -33,7 +33,7 @@ const proxied = new ObservableObject(obj);
 Each `ObservableObject` consists of the proxy object (`proxy` property) and the map of events (`events` property).
 
 ```typescript
-import { ObservableObject } from 'rxjs-ds';
+import { ObservableObject } from 'rxjs-observable-object';
 
 const proxied = new ObservableObject();
 const events = proxied.events;
@@ -78,7 +78,7 @@ ObservableFunction<F extends Function>(fn: F)
 Observe events when getting an object property:
 
 ```typescript
-import { ObservableObject, GetEvent } from 'rxjs-ds';
+import { ObservableObject, GetEvent } from 'rxjs-observable-object';
 
 const proxied = new ObservableObject();
 const events = proxied.events;
@@ -98,12 +98,12 @@ const _ = proxy['b'];
 // { property: 'b', value: 2, target: { a: 1, b: 2, c: 3 } }
 ```
 
-See demos: [demo/ts/demo_01.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_01.ts), [demo/demo_01.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_01.js) and [jsfiddle.net/x49qx05m](https://jsfiddle.net/x49qx05m/9/)
+See demos: [demo/ts/demo_01.ts](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/ts/demo_01.ts), [demo/demo_01.js](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/demo_01.js) and [jsfiddle.net/x49qx05m](https://jsfiddle.net/x49qx05m/9/)
 
 Observe events when setting/overriding an object property:
 
 ```typescript
-import { ObservableObject } from 'rxjs-ds';
+import { ObservableObject } from 'rxjs-observable-object';
 
 const { proxy: object, events } = new ObservableObject();
 
@@ -119,12 +119,12 @@ object['a'] = 42;
 // { property: 'a', oldValue: 1, newValue: 42, target: { a: 42, b: 2 } }
 ```
 
-See demo: [demo/demo_02.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_02.js) and [jsfiddle.net/7jofvccb](https://jsfiddle.net/7jofvccb/1/)
+See demo: [demo/demo_02.js](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/demo_02.js) and [jsfiddle.net/7jofvccb](https://jsfiddle.net/7jofvccb/1/)
 
 Observing changes on an already existing object:
 
 ```typescript
-import { ObservableObject } from 'rxjs-ds';
+import { ObservableObject } from 'rxjs-observable-object';
 
 const object = {
   'a': 1,
@@ -144,14 +144,14 @@ object['b'] = 42;
 // { property: 'b', oldValue: 2, newValue: 42, target: { a: 1, b: 42, c: 3 } }
 ```
 
-See demo: [demo/demo_03.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_03.js)
+See demo: [demo/demo_03.js](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/demo_03.js)
 
 ### Array
 
 Observing array length changes:
 
 ```typescript
-import { ObservableObject, SetEvent } from 'rxjs-ds';
+import { ObservableObject, SetEvent } from 'rxjs-observable-object';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/distinctUntilChanged';
 // Works with RxJS 5.5 and lettable operators as well
@@ -175,7 +175,7 @@ array.splice(1, 2); // remove two items
 // 1
 ```
 
-See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_04.ts), [demo/demo_04.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_04.js) and [jsfiddle.net/71cvcbfu](https://jsfiddle.net/71cvcbfu/5/)
+See demos: [demo/ts/demo_04.ts](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/ts/demo_04.ts), [demo/demo_04.js](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/demo_04.js) and [jsfiddle.net/71cvcbfu](https://jsfiddle.net/71cvcbfu/5/)
 
 Observing setters/getters works the same as with objects.
 
@@ -184,7 +184,7 @@ Observing setters/getters works the same as with objects.
 Functions can be proxied as well via the `ObservableFunction` class. The `onApply` event is triggered when invoking the proxied function.
 
 ```typescript
-import { ObservableFunction, ApplyEvent } from 'rxjs-ds';
+import { ObservableFunction, ApplyEvent } from 'rxjs-observable-object';
 import 'rxjs/add/operator/take';
 
 function func(n: number) {
@@ -204,7 +204,7 @@ proxy(42);
 // { thisArg: undefined, argumentsList: [ 42 ], result: 84, target: [Function: func] }
 ```
 
-See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-ds/blob/master/demo/ts/demo_05.ts), [demo/demo_05.js](https://github.com/martinsik/rxjs-ds/blob/master/demo/demo_05.js) and [jsfiddle.net/8zs654db](https://jsfiddle.net/8zs654db/5/)
+See demos: [demo/ts/demo_05.ts](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/ts/demo_05.ts), [demo/demo_05.js](https://github.com/martinsik/rxjs-observable-object/blob/master/demo/demo_05.js) and [jsfiddle.net/8zs654db](https://jsfiddle.net/8zs654db/5/)
 
 ## Tests
 

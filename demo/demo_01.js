@@ -1,5 +1,5 @@
-const RxJS_DS = require('../dist/package/bundle/rxjs-ds');
-const ObservableObject = RxJS_DS.ObservableObject;
+const RxJS_OO = require('../dist/package/bundle/rxjs-observable-object');
+const ObservableObject = RxJS_OO.ObservableObject;
 
 const proxied = new ObservableObject();
 const events = proxied.events;

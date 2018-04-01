@@ -1,6 +1,9 @@
+/**
+ * Monitoring function calls
+ */
 require('rxjs');
-const RxJS_DS = require('../dist/package/bundle/rxjs-ds');
-const ObservableFunction = RxJS_DS.ObservableFunction;
+const RxJS_OO = require('../dist/package/bundle/rxjs-observable-object');
+const ObservableFunction = RxJS_OO.ObservableFunction;
 
 function func(n) {
   return 2 * n;

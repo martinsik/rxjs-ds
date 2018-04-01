@@ -1,5 +1,8 @@
-const RxJS_DS = require('../dist/package/bundle/rxjs-ds');
-const ObservableObject = RxJS_DS.ObservableObject;
+/**
+ * Monitoring object setters from an existing object
+ */
+const RxJS_OO = require('../dist/package/bundle/rxjs-observable-object');
+const ObservableObject = RxJS_OO.ObservableObject;
 
 const object = {
   'a': 1,
